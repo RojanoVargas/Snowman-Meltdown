@@ -21,6 +21,7 @@ def display_game_state(mistakes, secret_word, guessed_letters):
         else:
             display_word += "_ "
     print("Word: ", display_word)
+    print("Guessed letters:", " ".join(guessed_letters))
     print("\n")
 
 
@@ -33,7 +34,12 @@ def play_game():
     while mistakes < max_mistakes:
         display_game_state(mistakes, secret_word, guessed_letters)
 
-        guess = input("Guess a letter: ").lower()
+        guess = input("Guess a letter: ").lower().strip()
+
+        # Input validation
+        if len(guess) != 1 or not guess.isalpha():
+            print("Please enter a single alphabetical character.")
+            continue
 
         if guess in guessed_letters:
             print("You already guessed that letter.")
@@ -57,8 +63,13 @@ def play_game():
         if all_guessed:
             display_game_state(mistakes, secret_word, guessed_letters)
             print("🎉 You saved the snowman!")
-            return
+            break
 
-    # If loop ends, player lost
-    display_game_state(mistakes, secret_word, guessed_letters)
-    print("❄️ The snowman melted... You lost!")
+    if not all(letter in guessed_letters for letter in secret_word):
+        print("❄️ The snowman melted... You lost!")
+
+
+    # Replay option
+    replay = input("Do you want to play again? (y/n): ").lower().strip()
+    if replay == "y":
+        play_game()
